@@ -8,7 +8,7 @@ const Routes = () => (
     {menuItens.map(route => (
       <Route
         key={route.slug}
-        path={`/${route.slug}`}
+        path={`/${route.slug}${route.paramRoute}`}
         exact={route.exact}
         component={route.component}
       />
