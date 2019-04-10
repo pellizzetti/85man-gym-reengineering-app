@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "customize-cra": "^0.2.12",
     "grommet": "^2.6.5",
     "grommet-icons": "^4.2.0",
@@ -54,7 +55,7 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject",
+    "eject": "react-scripts eject",
     "precommit": "lint-staged"
   }
 }
