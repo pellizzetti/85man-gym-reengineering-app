@@ -5,6 +5,10 @@ import {
 } from 'grommet';
 import { Close, Menu } from 'grommet-icons';
 
+import Logo from './styles';
+
+import logoImage from '~/assets/images/logo.png';
+
 const Header = ({ showSidebar, handleSidebarToggle }) => (
   <Box
     tag="header"
@@ -18,8 +22,9 @@ const Header = ({ showSidebar, handleSidebarToggle }) => (
   >
     <Box direction="row" align="center">
       <Button icon={showSidebar ? <Close /> : <Menu />} onClick={handleSidebarToggle} />
-      <Heading level="3" margin="none">
-        GMV - Academia
+      <Logo src={logoImage} alt="Logo da GMV" />
+      <Heading level="3" margin={{ left: 'xsmall', top: 'none', bottom: 'none' }}>
+        GMV
       </Heading>
     </Box>
     <Clock type="digital" />
