@@ -28,10 +28,10 @@ const ListItem = props => (
 const renderList = history => (
   <List>
     {menuItens.map(item => (
-      <ListItem key={item.slug}>
+      <ListItem key={`${item.slug}-${item.paramAnchor}`}>
         <Anchor
           onClick={() => {
-            history.push(`/${item.slug}${item.paramAnchor}`);
+            history.push(`/${item.path}${item.paramAnchor}`);
           }}
           icon={item.icon}
           label={item.label}

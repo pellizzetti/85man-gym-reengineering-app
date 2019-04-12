@@ -5,14 +5,16 @@ import menuItens from '~/utils/menu';
 
 const Routes = () => (
   <Switch>
-    {menuItens.map(route => (
+    {menuItens.map(
+      route => !route.group && (
       <Route
-        key={route.slug}
-        path={`/${route.slug}${route.paramRoute}`}
+        key={`${route.slug}-${route.paramRoute}`}
+        path={`/${route.path}${route.paramRoute}`}
         exact={route.exact}
         component={route.component}
       />
-    ))}
+      ),
+    )}
     <Redirect from="*" to="/dashboard" />
   </Switch>
 );
