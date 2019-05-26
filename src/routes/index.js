@@ -1,20 +1,21 @@
 import React from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
+import { Redirect, Switch } from 'react-router-dom';
 
-import menuItens from '~/utils/menu';
+import Dashboard from '~/pages/dashboard';
+
+import StudentsList from '~/pages/students/list';
+import StudentsForm from '~/pages/students/form';
+
+import Route from './Route';
 
 const Routes = () => (
   <Switch>
-    {menuItens.map(
-      route => !route.group && (
-      <Route
-        key={`${route.slug}-${route.paramRoute}`}
-        path={`/${route.path}${route.paramRoute}`}
-        exact={route.exact}
-        component={route.component}
-      />
-      ),
-    )}
+    <Route path="/dashboard" component={Dashboard} />
+
+    <Route exact path="/students" component={StudentsList} />
+    <Route path="/students/new" component={StudentsForm} />
+    <Route path="/students/edit/:id" component={StudentsForm} />
+
     <Redirect from="*" to="/dashboard" />
   </Switch>
 );

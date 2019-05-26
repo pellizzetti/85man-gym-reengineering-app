@@ -2,11 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import {
-  Anchor, Box, Button, Collapsible, Layer, ResponsiveContext,
+  Anchor, Box, Button, Collapsible, Layer, Menu, ResponsiveContext,
 } from 'grommet';
-import { FormClose } from 'grommet-icons';
-
-import menuItens from '~/utils/menu';
+import {
+  Analytics,
+  Baby,
+  Clock,
+  Currency,
+  Help,
+  Home,
+  FormClose,
+  Group,
+  System,
+  Tag,
+  Transaction,
+} from 'grommet-icons';
 
 const List = props => <Box fill tag="ul" {...props} />;
 
@@ -27,18 +37,124 @@ const ListItem = props => (
 
 const renderList = history => (
   <List>
-    {menuItens.map(item => (
-      <ListItem key={`${item.slug}-${item.paramAnchor}`}>
-        <Anchor
-          onClick={() => {
-            history.push(`/${item.path}${item.paramAnchor}`);
-          }}
-          icon={item.icon}
-          label={item.label}
-          margin={{ top: 'xsmall', bottom: 'small' }}
-        />
-      </ListItem>
-    ))}
+    <ListItem
+      margin={{
+        top: 'small',
+        right: 'small',
+        bottom: 'none',
+        left: 'small',
+      }}
+    >
+      <Anchor
+        onClick={() => {
+          history.push('/dashboard');
+        }}
+        icon={<Home />}
+        label="Dashboard"
+        size="medium"
+        margin={{ top: 'small', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Group color="brand" />
+      <Menu
+        label="Cadastro"
+        alignSelf="center"
+        color="brand"
+        items={[
+          {
+            label: 'Alunos',
+            onClick: () => {
+              history.push('/students/new');
+            },
+          },
+        ]}
+        margin={{ top: 'none', bottom: 'xsmall' }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {
+          history.push('/students');
+        }}
+        icon={<Baby />}
+        label="Alunos"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<Clock />}
+        label="Horários"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<Transaction />}
+        label="Vendas"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<Tag />}
+        label="Compras"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<Currency />}
+        label="Caixa"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<System />}
+        label="Sistema"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<Analytics />}
+        label="Relatórios"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {}}
+        icon={<Help />}
+        label="Ajuda"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
   </List>
 );
 
@@ -63,7 +179,7 @@ const Sidebar = ({ showSidebar, handleSidebarClose, history }) => (
           <Button icon={<FormClose />} onClick={handleSidebarClose} />
         </Box>
         <Box fill background="light-2" align="center" justify="center">
-          {renderList()}
+          {renderList(history)}
         </Box>
       </Layer>
     ))

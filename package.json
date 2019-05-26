@@ -23,9 +23,16 @@
     ]
   },
   "dependencies": {
+    "@devexpress/dx-react-core": "^1.10.5",
+    "@devexpress/dx-react-grid": "^1.10.5",
+    "@material-ui/core": "^3.9.3",
+    "@sweetalert/with-react": "^0.1.1",
     "axios": "^0.18.0",
     "customize-cra": "^0.2.12",
+    "dx-react-grid-grommet": "^1.0.16",
+    "formik": "^1.5.7",
     "grommet": "^2.6.5",
+    "grommet-controls": "^1.1.19",
     "grommet-icons": "^4.2.0",
     "history": "^4.9.0",
     "prop-types": "^15.7.2",
@@ -33,7 +40,9 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
-    "styled-components": "^4.2.0"
+    "react-toastify": "^5.1.0",
+    "styled-components": "^4.2.0",
+    "sweetalert": "^2.1.2"
   },
   "devDependencies": {
     "babel-plugin-root-import": "^6.1.0",
