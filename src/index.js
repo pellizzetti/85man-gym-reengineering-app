@@ -2,20 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-
-import DefaultLayout from '~/layout';
+import { ToastContainer } from 'react-toastify';
 
 import Routes from '~/routes';
 
 import * as serviceWorker from '~/serviceWorker';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 const history = createBrowserHistory();
 
 const Index = () => (
   <Router history={history}>
-    <DefaultLayout>
-      <Routes />
-    </DefaultLayout>
+    <Routes />
+    <ToastContainer position="top-left" />
   </Router>
 );
 
