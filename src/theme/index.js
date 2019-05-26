@@ -1,7 +1,3 @@
-// #F6B968
-
-// #00CFAA
-
 const theme = {
   global: {
     colors: {
@@ -9,11 +5,23 @@ const theme = {
       control: {
         light: '#F6B968',
       },
+      text: {
+        light: '#4E1C80',
+      },
     },
     font: {
       family: 'Roboto',
       size: '14px',
       height: '20px',
+    },
+  },
+  button: {
+    color: '#4E1C80',
+  },
+  anchor: {
+    font: {
+      style: 'normal',
+      weight: 400,
     },
   },
 };
