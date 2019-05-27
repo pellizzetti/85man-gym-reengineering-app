@@ -2,10 +2,6 @@
 import { getRGBA } from 'grommet/utils/colors';
 import { Table } from 'dx-react-grid-grommet';
 
-export const Separator = styled.hr`
-  width: 100%;
-`;
-
 export const StripedTable = styled(Table.Table)`
   & > thead tr {
     font-weight: 500;

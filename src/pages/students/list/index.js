@@ -11,7 +11,7 @@ import {
 } from 'dx-react-grid-grommet';
 import { toast } from 'react-toastify';
 
-import { Separator, StripedTable } from './styles';
+import { StripedTable } from './styles';
 
 import api from '~/services/api';
 
@@ -110,8 +110,6 @@ class StudentsList extends Component {
     } = this.state;
     const { history } = this.props;
 
-    console.log(this.props);
-
     return (
       <Box flex pad="small">
         <Box flex="shrink" pad="small" direction="row" justify="between">
@@ -124,7 +122,6 @@ class StudentsList extends Component {
             onClick={() => history.push('/students/new')}
           />
         </Box>
-        <Separator />
         <Grid rows={results} columns={columns}>
           <PagingState
             currentPage={currentPage}
@@ -140,7 +137,9 @@ class StudentsList extends Component {
             ]}
             noDataCellComponent={() => (
               <td colSpan="5">
-                <span>Nenhum registro</span>
+                <Box align="center">
+                  <Text>Nenhum registro</Text>
+                </Box>
               </td>
             )}
             tableComponent={StripedTable}

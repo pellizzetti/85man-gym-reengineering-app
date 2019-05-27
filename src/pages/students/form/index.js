@@ -8,6 +8,7 @@ import { LinkPrevious } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
 import { toast } from 'react-toastify';
 import swal from '@sweetalert/with-react';
+import * as Yup from 'yup';
 
 import PersonalDataForm from './personalDataForm';
 import AddressForm from './addressForm';
@@ -28,7 +29,12 @@ class StudentsForm extends Component {
   };
 
   state = {
-    data: {},
+    defaultOptions: [],
+    options: [],
+    data: {
+      active: true,
+      quiz: {},
+    },
     isUpdating: false,
     isLoading: true,
     isSubmitted: false,
@@ -43,10 +49,21 @@ class StudentsForm extends Component {
       } = this.props;
 
       if (id) {
-        const { data } = await api.get(`/students/${id}`);
+        const [{ data }, { data: dataOptions }] = await Promise.all([
+          api.get(`/students/${id}`),
+          api.get('/students', { params: { showAll: true } }),
+        ]);
 
-        this.setState({ data, isLoading: false });
+        const options = dataOptions.filter(o => o.id !== parseInt(id, 10));
+
+        this.setState({ data, options, defaultOptions: options });
+      } else {
+        const { data: options } = await api.get('/students', { params: { showAll: true } });
+
+        this.setState({ options, defaultOptions: options });
       }
+
+      this.setState({ isLoading: false });
     } catch (err) {
       toast.error('Erro ao buscar dados do aluno. :(');
       console.error(err);
@@ -81,9 +98,24 @@ class StudentsForm extends Component {
     }
   };
 
+  handleClose = () => {
+    const { defaultOptions } = this.state;
+
+    this.setState({ options: defaultOptions });
+  };
+
+  handleSearch = (text) => {
+    const exp = new RegExp(text, 'i');
+    const { defaultOptions } = this.state;
+
+    this.setState({
+      options: defaultOptions.filter(o => exp.test(o.name)),
+    });
+  };
+
   render() {
     const {
-      data, isLoading, isUpdating, isSubmitted,
+      data, isLoading, isUpdating, isSubmitted, options, defaultOptions,
     } = this.state;
     const {
       match: {
@@ -94,7 +126,7 @@ class StudentsForm extends Component {
 
     return (
       <Box flex pad="small">
-        <Box flex="shrink" pad="small" direction="row" justify="between">
+        <Box pad="small" direction="row" justify="between">
           <Heading level={2} margin="none" color="brand">
             {`${isUpdating ? 'Editar' : 'Novo'} aluno`}
           </Heading>
@@ -112,16 +144,11 @@ class StudentsForm extends Component {
         ) : (
           <Formik
             initialValues={data}
-            validate={(values) => {
-              const errors = {};
-              if (!values.name) {
-                errors.name = '* Obrigatório';
-              }
-
-              return errors;
-            }}
             validateOnBlur={isSubmitted}
             validateOnChange={isSubmitted}
+            validationSchema={Yup.object().shape({
+              name: Yup.string().required('Campo obrigatório'),
+            })}
             onSubmit={async (values, { setSubmitting }) => {
               this.setState({
                 isLoading: true,
@@ -161,18 +188,28 @@ class StudentsForm extends Component {
                     <AddressForm {...props} />
                   </Tab>
                   <Tab title="Questionário">
-                    <QuizForm {...props} />
+                    <QuizForm
+                      options={options}
+                      defaultOptions={defaultOptions}
+                      handleClose={this.handleClose}
+                      handleSearch={this.handleSearch}
+                      {...props}
+                    />
                   </Tab>
                 </Tabs>
 
-                <Box tag="footer" margin={{ top: 'medium' }} direction="row" justify="between">
+                <Box
+                  tag="footer"
+                  margin={{ top: 'medium', bottom: 'medium' }}
+                  direction="row"
+                  justify="between"
+                >
                   <Button type="submit" primary label="Salvar" />
                   {isUpdating && (
                     <Button
                       type="button"
                       color="status-critical"
                       label="Excluir"
-                      // onClick={this.handleDelete}
                       onClick={async () => {
                         const deleteUser = await swal({
                           title: 'Excluir aluno?',
@@ -183,7 +220,6 @@ class StudentsForm extends Component {
 
                         if (deleteUser) this.handleDelete();
                       }}
-                      // swal("Thanks for your rating!", `You rated us ${value}/3`, "success")
                     />
                   )}
                 </Box>
