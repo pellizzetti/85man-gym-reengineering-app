@@ -211,14 +211,14 @@ class StudentsForm extends Component {
                       color="status-critical"
                       label="Excluir"
                       onClick={async () => {
-                        const deleteUser = await swal({
+                        const deleteStudent = await swal({
                           title: 'Excluir aluno?',
                           text: 'Essa ação não poderá ser revertida!',
                           icon: 'warning',
                           buttons: ['Cancelar', 'Excluir'],
                         });
 
-                        if (deleteUser) this.handleDelete();
+                        if (deleteStudent) this.handleDelete();
                       }}
                     />
                   )}

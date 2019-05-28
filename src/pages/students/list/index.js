@@ -118,7 +118,7 @@ class StudentsList extends Component {
           </Heading>
           <Button
             icon={<UserAdd color="brand" />}
-            label="Adicionar usuário"
+            label="Adicionar aluno"
             onClick={() => history.push('/students/new')}
           />
         </Box>
