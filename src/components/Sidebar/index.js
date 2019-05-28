@@ -75,6 +75,18 @@ const renderList = history => (
               history.push('/products/new');
             },
           },
+          {
+            label: 'Instrutores',
+            onClick: () => {
+              history.push('/instructors/new');
+            },
+          },
+          {
+            label: 'Atividades',
+            onClick: () => {
+              history.push('/activities/new');
+            },
+          },
         ]}
         margin={{ top: 'none', bottom: 'xsmall' }}
       />
