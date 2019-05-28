@@ -116,7 +116,7 @@ class ProductsList extends Component {
       <Box flex pad="small">
         <Box flex="shrink" pad="small" direction="row" justify="between">
           <Heading level={2} margin="none" color="brand">
-            Alunos
+            Produtos
           </Heading>
           <Button
             icon={<Add color="brand" />}
