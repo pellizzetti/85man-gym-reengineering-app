@@ -69,6 +69,12 @@ const renderList = history => (
               history.push('/students/new');
             },
           },
+          {
+            label: 'Produtos',
+            onClick: () => {
+              history.push('/products/new');
+            },
+          },
         ]}
         margin={{ top: 'none', bottom: 'xsmall' }}
       />
