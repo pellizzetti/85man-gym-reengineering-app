@@ -16,7 +16,7 @@ import {
 } from 'dx-react-grid-grommet';
 import { toast } from 'react-toastify';
 
-import { StripedTable } from './styles';
+import StripedTable from '~/components/StripedTable';
 
 import api from '~/services/api';
 
@@ -42,7 +42,7 @@ class ProductsList extends Component {
       },
       {
         name: 'description',
-        title: 'Description',
+        title: 'Descrição',
         getCellValue: datum => <Text>{datum.description}</Text>,
       },
       {

@@ -16,7 +16,7 @@ import {
 } from 'dx-react-grid-grommet';
 import { toast } from 'react-toastify';
 
-import { StripedTable } from './styles';
+import StripedTable from '~/components/StripedTable';
 
 import api from '~/services/api';
 
