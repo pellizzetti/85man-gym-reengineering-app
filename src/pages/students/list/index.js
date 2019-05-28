@@ -5,9 +5,14 @@ import {
 } from 'grommet';
 import { Edit, UserAdd } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
-import { PagingState, CustomPaging } from '@devexpress/dx-react-grid';
+import { PagingState, CustomPaging, SearchState } from '@devexpress/dx-react-grid';
 import {
-  Grid, Table, TableHeaderRow, PagingPanel,
+  Grid,
+  Table,
+  TableHeaderRow,
+  PagingPanel,
+  Toolbar,
+  SearchPanel,
 } from 'dx-react-grid-grommet';
 import { toast } from 'react-toastify';
 
@@ -26,8 +31,9 @@ class StudentsList extends Component {
     results: [],
     loading: true,
     totalCount: 0,
-    pageSize: 5,
+    pageSize: 10,
     currentPage: 0,
+    searchValue: '',
     columns: [
       {
         name: 'id',
@@ -74,11 +80,11 @@ class StudentsList extends Component {
     await this.loadData();
   }
 
-  loadData = async (currentPage = 0) => {
+  loadData = async (currentPage = 0, search = '') => {
     try {
       const {
         data: { results, total: totalCount },
-      } = await api.get('/students', { params: { currentPage } });
+      } = await api.get('/students', { params: { currentPage, search } });
 
       this.setState({
         results,
@@ -97,11 +103,24 @@ class StudentsList extends Component {
   };
 
   changeCurrentPage = async (currentPage) => {
+    const { searchValue } = this.state;
+
     this.setState({
       loading: true,
       currentPage,
     });
-    await this.loadData(currentPage);
+
+    await this.loadData(currentPage, searchValue);
+  };
+
+  changeSearchValue = async (searchValue) => {
+    this.setState({
+      loading: true,
+      searchValue,
+      currentPage: 0,
+    });
+
+    await this.loadData(0, searchValue);
   };
 
   render() {
@@ -129,6 +148,7 @@ class StudentsList extends Component {
             pageSize={pageSize}
           />
           <CustomPaging totalCount={totalCount} />
+          <SearchState onValueChange={this.changeSearchValue} />
           <Table
             columnExtensions={[
               { columnName: 'id', align: 'left', width: 60 },
@@ -145,6 +165,8 @@ class StudentsList extends Component {
             tableComponent={StripedTable}
           />
           <TableHeaderRow />
+          <Toolbar />
+          <SearchPanel messages={{ searchPlaceholder: 'Pesquisar alunos...' }} />
           <PagingPanel messages={{ info: ({ from, to, count }) => `${from}-${to} de ${count}` }} />
           <Box align="center">{loading && <Spinning color="brand" size="large" />}</Box>
         </Grid>
