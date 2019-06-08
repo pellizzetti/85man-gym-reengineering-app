@@ -2,20 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import {
-  Anchor, Box, Button, Collapsible, Layer, Menu, ResponsiveContext,
+  Anchor,
+  Box,
+  Button,
+  Collapsible,
+  Layer,
+  Menu,
+  ResponsiveContext
 } from 'grommet';
 import {
   Analytics,
   Baby,
   Clock,
   Currency,
-  Help,
-  Home,
+  DocumentTime,
   FormClose,
   Group,
+  Help,
+  Home,
   System,
   Tag,
-  Transaction,
+  Transaction
 } from 'grommet-icons';
 
 const List = props => <Box fill tag="ul" {...props} />;
@@ -26,7 +33,7 @@ const ListItem = props => (
       color: 'border',
       size: 'xsmall',
       style: 'outset',
-      side: 'bottom',
+      side: 'bottom'
     }}
     margin="small"
     direction="row"
@@ -42,7 +49,7 @@ const renderList = history => (
         top: 'small',
         right: 'small',
         bottom: 'none',
-        left: 'small',
+        left: 'small'
       }}
     >
       <Anchor
@@ -67,26 +74,26 @@ const renderList = history => (
             label: 'Alunos',
             onClick: () => {
               history.push('/students/new');
-            },
+            }
           },
           {
             label: 'Produtos',
             onClick: () => {
               history.push('/products/new');
-            },
+            }
           },
           {
             label: 'Instrutores',
             onClick: () => {
               history.push('/instructors/new');
-            },
+            }
           },
           {
             label: 'Atividades',
             onClick: () => {
               history.push('/activities/new');
-            },
-          },
+            }
+          }
         ]}
         margin={{ top: 'none', bottom: 'xsmall' }}
       />
@@ -98,6 +105,18 @@ const renderList = history => (
         }}
         icon={<Baby />}
         label="Alunos"
+        size="medium"
+        margin={{ top: 'none', bottom: 'small' }}
+        style={{ fontWeight: 400 }}
+      />
+    </ListItem>
+    <ListItem>
+      <Anchor
+        onClick={() => {
+          history.push('/enrollments');
+        }}
+        icon={<DocumentTime />}
+        label="Matrículas"
         size="medium"
         margin={{ top: 'none', bottom: 'small' }}
         style={{ fontWeight: 400 }}
@@ -178,29 +197,36 @@ const renderList = history => (
 
 const Sidebar = ({ showSidebar, handleSidebarClose, history }) => (
   <ResponsiveContext.Consumer>
-    {size => (!showSidebar || size !== 'small' ? (
-      <Collapsible direction="horizontal" open={showSidebar}>
-        <Box
-          flex
-          width="medium"
-          background="light-2"
-          elevation="small"
-          align="center"
-          justify="center"
-        >
-          {renderList(history)}
-        </Box>
-      </Collapsible>
-    ) : (
-      <Layer>
-        <Box background="light-2" tag="header" justify="end" align="center" direction="row">
-          <Button icon={<FormClose />} onClick={handleSidebarClose} />
-        </Box>
-        <Box fill background="light-2" align="center" justify="center">
-          {renderList(history)}
-        </Box>
-      </Layer>
-    ))
+    {size =>
+      !showSidebar || size !== 'small' ? (
+        <Collapsible direction="horizontal" open={showSidebar}>
+          <Box
+            flex
+            width="medium"
+            background="light-2"
+            elevation="small"
+            align="center"
+            justify="center"
+          >
+            {renderList(history)}
+          </Box>
+        </Collapsible>
+      ) : (
+        <Layer>
+          <Box
+            background="light-2"
+            tag="header"
+            justify="end"
+            align="center"
+            direction="row"
+          >
+            <Button icon={<FormClose />} onClick={handleSidebarClose} />
+          </Box>
+          <Box fill background="light-2" align="center" justify="center">
+            {renderList(history)}
+          </Box>
+        </Layer>
+      )
     }
   </ResponsiveContext.Consumer>
 );
@@ -209,8 +235,8 @@ Sidebar.propTypes = {
   showSidebar: PropTypes.bool.isRequired,
   handleSidebarClose: PropTypes.func.isRequired,
   history: PropTypes.shape({
-    push: PropTypes.func,
-  }).isRequired,
+    push: PropTypes.func
+  }).isRequired
 };
 
 export default withRouter(Sidebar);

@@ -1,9 +1,7 @@
 ﻿import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik } from 'formik';
-import {
-  Box, Button, Heading, Tab, Tabs,
-} from 'grommet';
+import { Box, Button, Heading, Tab, Tabs } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
 import { toast } from 'react-toastify';
@@ -19,13 +17,13 @@ import api from '~/services/api';
 class StudentsForm extends Component {
   static propTypes = {
     history: PropTypes.shape({
-      push: PropTypes.func,
+      push: PropTypes.func
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
-        id: PropTypes.string,
-      }),
-    }).isRequired,
+        id: PropTypes.string
+      })
+    }).isRequired
   };
 
   state = {
@@ -33,32 +31,34 @@ class StudentsForm extends Component {
     options: [],
     data: {
       active: true,
-      quiz: {},
+      quiz: {}
     },
     isUpdating: false,
     isLoading: true,
-    isSubmitted: false,
+    isSubmitted: false
   };
 
   async componentDidMount() {
     try {
       const {
         match: {
-          params: { id },
-        },
+          params: { id }
+        }
       } = this.props;
 
       if (id) {
         const [{ data }, { data: dataOptions }] = await Promise.all([
           api.get(`/students/${id}`),
-          api.get('/students', { params: { showAll: true } }),
+          api.get('/students', { params: { showAll: true } })
         ]);
 
         const options = dataOptions.filter(o => o.id !== parseInt(id, 10));
 
         this.setState({ data, options, defaultOptions: options });
       } else {
-        const { data: options } = await api.get('/students', { params: { showAll: true } });
+        const { data: options } = await api.get('/students', {
+          params: { showAll: true }
+        });
 
         this.setState({ options, defaultOptions: options });
       }
@@ -68,14 +68,14 @@ class StudentsForm extends Component {
       toast.error('Erro ao buscar dados do aluno. :(');
       console.error(err);
       this.setState({
-        isLoading: false,
+        isLoading: false
       });
     }
   }
 
   static getDerivedStateFromProps(props) {
     return {
-      isUpdating: !!props.match.params.id,
+      isUpdating: !!props.match.params.id
     };
   }
 
@@ -83,9 +83,9 @@ class StudentsForm extends Component {
     try {
       const {
         match: {
-          params: { id },
+          params: { id }
         },
-        history,
+        history
       } = this.props;
 
       await api.delete(`/students/${id}`);
@@ -104,24 +104,29 @@ class StudentsForm extends Component {
     this.setState({ options: defaultOptions });
   };
 
-  handleSearch = (text) => {
+  handleSearch = text => {
     const exp = new RegExp(text, 'i');
     const { defaultOptions } = this.state;
 
     this.setState({
-      options: defaultOptions.filter(o => exp.test(o.name)),
+      options: defaultOptions.filter(o => exp.test(o.name))
     });
   };
 
   render() {
     const {
-      data, isLoading, isUpdating, isSubmitted, options, defaultOptions,
+      data,
+      isLoading,
+      isUpdating,
+      isSubmitted,
+      options,
+      defaultOptions
     } = this.state;
     const {
       match: {
-        params: { id },
+        params: { id }
       },
-      history,
+      history
     } = this.props;
 
     return (
@@ -147,16 +152,16 @@ class StudentsForm extends Component {
             validateOnBlur={isSubmitted}
             validateOnChange={isSubmitted}
             validationSchema={Yup.object().shape({
-              name: Yup.string().required('Campo obrigatório'),
+              name: Yup.string().required('Campo obrigatório')
             })}
             onSubmit={async (values, { setSubmitting }) => {
               this.setState({
-                isLoading: true,
+                isLoading: true
               });
 
               try {
                 await api.postOrPut('/students', id, {
-                  values,
+                  values
                 });
 
                 toast.success('Aluno salvo com sucesso!');
@@ -165,7 +170,7 @@ class StudentsForm extends Component {
                 toast.error('Erro ao salvar aluno. :(');
                 console.error(err);
                 this.setState({
-                  isLoading: false,
+                  isLoading: false
                 });
               }
 
@@ -174,7 +179,7 @@ class StudentsForm extends Component {
           >
             {({ handleSubmit, ...props }) => (
               <form
-                onSubmit={(event) => {
+                onSubmit={event => {
                   event.preventDefault();
                   this.setState({ isSubmitted: true });
                   handleSubmit();
@@ -215,7 +220,7 @@ class StudentsForm extends Component {
                           title: 'Excluir aluno?',
                           text: 'Essa ação não poderá ser revertida!',
                           icon: 'warning',
-                          buttons: ['Cancelar', 'Excluir'],
+                          buttons: ['Cancelar', 'Excluir']
                         });
 
                         if (deleteStudent) this.handleDelete();

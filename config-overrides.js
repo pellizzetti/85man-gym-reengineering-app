@@ -4,8 +4,8 @@ const rootImport = [
   'root-import',
   {
     rootPathPrefix: '~',
-    rootPathSuffix: 'src',
-  },
+    rootPathSuffix: 'src'
+  }
 ];
 
 module.exports = override(addBabelPlugin(rootImport));

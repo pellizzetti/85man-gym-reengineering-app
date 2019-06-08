@@ -2,31 +2,31 @@ module.exports = {
   parser: 'babel-eslint',
   env: {
     browser: true,
-    es6: true,
+    es6: true
   },
-  extends: 'airbnb',
+  extends: ['airbnb', 'prettier', 'prettier/react'],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
+    SharedArrayBuffer: 'readonly'
   },
   parserOptions: {
     ecmaFeatures: {
-      jsx: true,
+      jsx: true
     },
     ecmaVersion: 2018,
-    sourceType: 'module',
+    sourceType: 'module'
   },
   plugins: ['react'],
   rules: {
     'react/jsx-filename-extension': ['error', { extensions: ['.js', '.jsx'] }],
-    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-console': ['error', { allow: ['warn', 'error'] }]
   },
   settings: {
     'import/resolver': {
       'babel-plugin-root-import': {
         rootPathPrefix: '~',
-        rootPathSuffix: 'src',
-      },
-    },
-  },
+        rootPathSuffix: 'src'
+      }
+    }
+  }
 };

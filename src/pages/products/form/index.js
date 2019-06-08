@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik } from 'formik';
-import {
-  Box, Button, FormField, Heading, TextInput,
-} from 'grommet';
+import { Box, Button, FormField, Heading, TextInput } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
 import { toast } from 'react-toastify';
@@ -15,28 +13,28 @@ import api from '~/services/api';
 class ProductsForm extends Component {
   static propTypes = {
     history: PropTypes.shape({
-      push: PropTypes.func,
+      push: PropTypes.func
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
-        id: PropTypes.string,
-      }),
-    }).isRequired,
+        id: PropTypes.string
+      })
+    }).isRequired
   };
 
   state = {
     data: {},
     isUpdating: false,
     isLoading: true,
-    isSubmitted: false,
+    isSubmitted: false
   };
 
   async componentDidMount() {
     try {
       const {
         match: {
-          params: { id },
-        },
+          params: { id }
+        }
       } = this.props;
 
       if (id) {
@@ -50,14 +48,14 @@ class ProductsForm extends Component {
       toast.error('Erro ao buscar dados do produto. :(');
       console.error(err);
       this.setState({
-        isLoading: false,
+        isLoading: false
       });
     }
   }
 
   static getDerivedStateFromProps(props) {
     return {
-      isUpdating: !!props.match.params.id,
+      isUpdating: !!props.match.params.id
     };
   }
 
@@ -65,9 +63,9 @@ class ProductsForm extends Component {
     try {
       const {
         match: {
-          params: { id },
+          params: { id }
         },
-        history,
+        history
       } = this.props;
 
       await api.delete(`/products/${id}`);
@@ -81,14 +79,12 @@ class ProductsForm extends Component {
   };
 
   render() {
-    const {
-      data, isLoading, isUpdating, isSubmitted,
-    } = this.state;
+    const { data, isLoading, isUpdating, isSubmitted } = this.state;
     const {
       match: {
-        params: { id },
+        params: { id }
       },
-      history,
+      history
     } = this.props;
 
     return (
@@ -116,16 +112,16 @@ class ProductsForm extends Component {
             validationSchema={Yup.object().shape({
               description: Yup.string().required('Campo obrigatório'),
               quantity: Yup.string().required('Campo obrigatório'),
-              amount: Yup.string().required('Campo obrigatório'),
+              amount: Yup.string().required('Campo obrigatório')
             })}
             onSubmit={async (values, { setSubmitting }) => {
               this.setState({
-                isLoading: true,
+                isLoading: true
               });
 
               try {
                 await api.postOrPut('/products', id, {
-                  values,
+                  values
                 });
 
                 toast.success('Produto salvo com sucesso!');
@@ -134,18 +130,16 @@ class ProductsForm extends Component {
                 toast.error('Erro ao salvar produto. :(');
                 console.error(err);
                 this.setState({
-                  isLoading: false,
+                  isLoading: false
                 });
               }
 
               setSubmitting();
             }}
           >
-            {({
-              errors, handleChange, handleSubmit, values,
-            }) => (
+            {({ errors, handleChange, handleSubmit, values }) => (
               <form
-                onSubmit={(event) => {
+                onSubmit={event => {
                   event.preventDefault();
                   this.setState({ isSubmitted: true });
                   handleSubmit();
@@ -167,7 +161,11 @@ class ProductsForm extends Component {
                     />
                   </FormField>
                   <FormField label="Valor unitário" error={errors.amount}>
-                    <TextInput name="amount" value={values.amount} onChange={handleChange} />
+                    <TextInput
+                      name="amount"
+                      value={values.amount}
+                      onChange={handleChange}
+                    />
                   </FormField>
                 </Box>
 
@@ -179,21 +177,21 @@ class ProductsForm extends Component {
                 >
                   <Button type="submit" primary label="Salvar" />
                   {isUpdating && (
-                  <Button
-                    type="button"
-                    color="status-critical"
-                    label="Excluir"
-                    onClick={async () => {
-                      const deleteProduct = await swal({
-                        title: 'Excluir produto?',
-                        text: 'Essa ação não poderá ser revertida!',
-                        icon: 'warning',
-                        buttons: ['Cancelar', 'Excluir'],
-                      });
+                    <Button
+                      type="button"
+                      color="status-critical"
+                      label="Excluir"
+                      onClick={async () => {
+                        const deleteProduct = await swal({
+                          title: 'Excluir produto?',
+                          text: 'Essa ação não poderá ser revertida!',
+                          icon: 'warning',
+                          buttons: ['Cancelar', 'Excluir']
+                        });
 
-                      if (deleteProduct) this.handleDelete();
-                    }}
-                  />
+                        if (deleteProduct) this.handleDelete();
+                      }}
+                    />
                   )}
                 </Box>
               </form>

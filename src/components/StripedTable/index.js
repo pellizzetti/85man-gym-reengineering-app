@@ -9,7 +9,8 @@ const StripedTable = styled(Table.Table)`
   }
 
   & > tbody tr:nth-of-type(odd) {
-    background-color: ${props => getRGBA(props.theme.global.colors.brand, 0.05)};
+    background-color: ${props =>
+      getRGBA(props.theme.global.colors.brand, 0.05)};
   }
 `;
 

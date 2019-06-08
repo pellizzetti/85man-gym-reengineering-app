@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik } from 'formik';
 import {
-  Box, Button, FormField, Heading, MaskedInput, TextInput,
+  Box,
+  Button,
+  FormField,
+  Heading,
+  MaskedInput,
+  TextInput
 } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
@@ -15,28 +20,28 @@ import api from '~/services/api';
 class InstructorsForm extends Component {
   static propTypes = {
     history: PropTypes.shape({
-      push: PropTypes.func,
+      push: PropTypes.func
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
-        id: PropTypes.string,
-      }),
-    }).isRequired,
+        id: PropTypes.string
+      })
+    }).isRequired
   };
 
   state = {
     data: {},
     isUpdating: false,
     isLoading: true,
-    isSubmitted: false,
+    isSubmitted: false
   };
 
   async componentDidMount() {
     try {
       const {
         match: {
-          params: { id },
-        },
+          params: { id }
+        }
       } = this.props;
 
       if (id) {
@@ -50,14 +55,14 @@ class InstructorsForm extends Component {
       toast.error('Erro ao buscar dados do instrutor. :(');
       console.error(err);
       this.setState({
-        isLoading: false,
+        isLoading: false
       });
     }
   }
 
   static getDerivedStateFromProps(props) {
     return {
-      isUpdating: !!props.match.params.id,
+      isUpdating: !!props.match.params.id
     };
   }
 
@@ -65,9 +70,9 @@ class InstructorsForm extends Component {
     try {
       const {
         match: {
-          params: { id },
+          params: { id }
         },
-        history,
+        history
       } = this.props;
 
       await api.delete(`/instructors/${id}`);
@@ -81,14 +86,12 @@ class InstructorsForm extends Component {
   };
 
   render() {
-    const {
-      data, isLoading, isUpdating, isSubmitted,
-    } = this.state;
+    const { data, isLoading, isUpdating, isSubmitted } = this.state;
     const {
       match: {
-        params: { id },
+        params: { id }
       },
-      history,
+      history
     } = this.props;
 
     return (
@@ -114,16 +117,16 @@ class InstructorsForm extends Component {
             validateOnBlur={isSubmitted}
             validateOnChange={isSubmitted}
             validationSchema={Yup.object().shape({
-              name: Yup.string().required('Campo obrigatório'),
+              name: Yup.string().required('Campo obrigatório')
             })}
             onSubmit={async (values, { setSubmitting }) => {
               this.setState({
-                isLoading: true,
+                isLoading: true
               });
 
               try {
                 await api.postOrPut('/instructors', id, {
-                  values,
+                  values
                 });
 
                 toast.success('Instrutor salvo com sucesso!');
@@ -132,7 +135,7 @@ class InstructorsForm extends Component {
                 toast.error('Erro ao salvar instrutor. :(');
                 console.error(err);
                 this.setState({
-                  isLoading: false,
+                  isLoading: false
                 });
               }
 
@@ -140,10 +143,14 @@ class InstructorsForm extends Component {
             }}
           >
             {({
-              errors, handleChange, handleSubmit, setFieldValue, values,
+              errors,
+              handleChange,
+              handleSubmit,
+              setFieldValue,
+              values
             }) => (
               <form
-                onSubmit={(event) => {
+                onSubmit={event => {
                   event.preventDefault();
                   this.setState({ isSubmitted: true });
                   handleSubmit();
@@ -151,7 +158,11 @@ class InstructorsForm extends Component {
               >
                 <Box>
                   <FormField label="Nome" error={errors.name}>
-                    <TextInput name="name" value={values.name || ''} onChange={handleChange} />
+                    <TextInput
+                      name="name"
+                      value={values.name || ''}
+                      onChange={handleChange}
+                    />
                   </FormField>
                   <FormField label="CPF" error={errors.doc}>
                     <MaskedInput
@@ -160,29 +171,31 @@ class InstructorsForm extends Component {
                         {
                           length: 3,
                           regexp: /^[0-9]{1,3}$/,
-                          placeholder: 'XXX',
+                          placeholder: 'XXX'
                         },
                         { fixed: '.' },
                         {
                           length: 3,
                           regexp: /^[0-9]{1,3}$/,
-                          placeholder: 'XXX',
+                          placeholder: 'XXX'
                         },
                         { fixed: '.' },
                         {
                           length: 3,
                           regexp: /^[0-9]{1,3}$/,
-                          placeholder: 'XXX',
+                          placeholder: 'XXX'
                         },
                         { fixed: '-' },
                         {
                           length: 2,
                           regexp: /^[0-9]{1,2}$/,
-                          placeholder: 'XX',
-                        },
+                          placeholder: 'XX'
+                        }
                       ]}
                       value={values.doc || ''}
-                      onChange={event => setFieldValue('doc', event.target.value)}
+                      onChange={event =>
+                        setFieldValue('doc', event.target.value)
+                      }
                     />
                   </FormField>
                 </Box>
@@ -195,21 +208,21 @@ class InstructorsForm extends Component {
                 >
                   <Button type="submit" primary label="Salvar" />
                   {isUpdating && (
-                  <Button
-                    type="button"
-                    color="status-critical"
-                    label="Excluir"
-                    onClick={async () => {
-                      const deleteInstructor = await swal({
-                        title: 'Excluir instrutor?',
-                        text: 'Essa ação não poderá ser revertida!',
-                        icon: 'warning',
-                        buttons: ['Cancelar', 'Excluir'],
-                      });
+                    <Button
+                      type="button"
+                      color="status-critical"
+                      label="Excluir"
+                      onClick={async () => {
+                        const deleteInstructor = await swal({
+                          title: 'Excluir instrutor?',
+                          text: 'Essa ação não poderá ser revertida!',
+                          icon: 'warning',
+                          buttons: ['Cancelar', 'Excluir']
+                        });
 
-                      if (deleteInstructor) this.handleDelete();
-                    }}
-                  />
+                        if (deleteInstructor) this.handleDelete();
+                      }}
+                    />
                   )}
                 </Box>
               </form>

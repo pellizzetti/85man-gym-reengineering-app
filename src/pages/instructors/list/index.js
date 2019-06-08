@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box, Button, Heading, Text,
-} from 'grommet';
+import { Box, Button, Heading, Text } from 'grommet';
 import { Edit, Add } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
-import { PagingState, CustomPaging, SearchState } from '@devexpress/dx-react-grid';
+import {
+  PagingState,
+  CustomPaging,
+  SearchState
+} from '@devexpress/dx-react-grid';
 import {
   Grid,
   Table,
   TableHeaderRow,
   PagingPanel,
   Toolbar,
-  SearchPanel,
+  SearchPanel
 } from 'dx-react-grid-grommet';
 import { toast } from 'react-toastify';
 
@@ -23,8 +25,8 @@ import api from '~/services/api';
 class IntructorsList extends Component {
   static propTypes = {
     history: PropTypes.shape({
-      push: PropTypes.func,
-    }).isRequired,
+      push: PropTypes.func
+    }).isRequired
   };
 
   state = {
@@ -38,22 +40,22 @@ class IntructorsList extends Component {
       {
         name: 'id',
         title: 'ID',
-        getCellValue: datum => <Text>{datum.id}</Text>,
+        getCellValue: datum => <Text>{datum.id}</Text>
       },
       {
         name: 'name',
         title: 'Nome',
-        getCellValue: datum => <Text>{datum.name}</Text>,
+        getCellValue: datum => <Text>{datum.name}</Text>
       },
       {
         name: 'doc',
         title: 'CPF',
-        getCellValue: datum => <Text>{datum.doc}</Text>,
+        getCellValue: datum => <Text>{datum.doc}</Text>
       },
       {
         name: 'edit',
         title: 'Ação',
-        getCellValue: (datum) => {
+        getCellValue: datum => {
           const { history } = this.props;
           return (
             <Button
@@ -62,9 +64,9 @@ class IntructorsList extends Component {
               onClick={() => history.push(`/instructors/edit/${datum.id}`)}
             />
           );
-        },
-      },
-    ],
+        }
+      }
+    ]
   };
 
   async componentDidMount() {
@@ -74,13 +76,13 @@ class IntructorsList extends Component {
   loadData = async (currentPage = 0, search = '') => {
     try {
       const {
-        data: { results, total: totalCount },
+        data: { results, total: totalCount }
       } = await api.get('/instructors', { params: { currentPage, search } });
 
       this.setState({
         results,
         totalCount,
-        loading: false,
+        loading: false
       });
     } catch (err) {
       toast.error('Erro ao buscar instrutores da API. :(');
@@ -88,27 +90,27 @@ class IntructorsList extends Component {
       this.setState({
         results: [],
         totalCount: 0,
-        loading: false,
+        loading: false
       });
     }
   };
 
-  changeCurrentPage = async (currentPage) => {
+  changeCurrentPage = async currentPage => {
     const { searchValue } = this.state;
 
     this.setState({
       loading: true,
-      currentPage,
+      currentPage
     });
 
     await this.loadData(currentPage, searchValue);
   };
 
-  changeSearchValue = async (searchValue) => {
+  changeSearchValue = async searchValue => {
     this.setState({
       loading: true,
       searchValue,
-      currentPage: 0,
+      currentPage: 0
     });
 
     await this.loadData(0, searchValue);
@@ -116,7 +118,12 @@ class IntructorsList extends Component {
 
   render() {
     const {
-      loading, columns, results, pageSize, currentPage, totalCount,
+      loading,
+      columns,
+      results,
+      pageSize,
+      currentPage,
+      totalCount
     } = this.state;
     const { history } = this.props;
 
@@ -143,10 +150,10 @@ class IntructorsList extends Component {
           <Table
             columnExtensions={[
               { columnName: 'id', align: 'left', width: 60 },
-              { columnName: 'edit', width: 170 },
+              { columnName: 'edit', width: 170 }
             ]}
             noDataCellComponent={() => (
-              <td colSpan="5">
+              <td colSpan="4">
                 <Box align="center">
                   <Text>Nenhum registro</Text>
                 </Box>
@@ -156,9 +163,17 @@ class IntructorsList extends Component {
           />
           <TableHeaderRow />
           <Toolbar />
-          <SearchPanel messages={{ searchPlaceholder: 'Pesquisar instrutores...' }} />
-          <PagingPanel messages={{ info: ({ from, to, count }) => `${from}-${to} de ${count}` }} />
-          <Box align="center">{loading && <Spinning color="brand" size="large" />}</Box>
+          <SearchPanel
+            messages={{ searchPlaceholder: 'Pesquisar instrutores...' }}
+          />
+          <PagingPanel
+            messages={{
+              info: ({ from, to, count }) => `${from}-${to} de ${count}`
+            }}
+          />
+          <Box align="center">
+            {loading && <Spinning color="brand" size="large" />}
+          </Box>
         </Grid>
       </Box>
     );

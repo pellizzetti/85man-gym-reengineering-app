@@ -1,22 +1,30 @@
 ﻿import React from 'react';
 import {
-  Box, CheckBox, FormField, Grid, MaskedInput, Select, TextInput,
+  Box,
+  CheckBox,
+  FormField,
+  Grid,
+  MaskedInput,
+  Select,
+  TextInput
 } from 'grommet';
 
-const PersonalDataForm = ({
-  errors, handleChange, setFieldValue, values,
-}) => (
+const PersonalDataForm = ({ errors, handleChange, setFieldValue, values }) => (
   <Box>
     <Grid
       fill="horizontal"
       columns={{
         count: 2,
-        size: 'auto',
+        size: 'auto'
       }}
       gap="small"
     >
       <FormField label="Nome" error={errors.name}>
-        <TextInput name="name" value={values.name || ''} onChange={handleChange} />
+        <TextInput
+          name="name"
+          value={values.name || ''}
+          onChange={handleChange}
+        />
       </FormField>
       <FormField label="Nascimento" error={errors.birthday}>
         <MaskedInput
@@ -25,22 +33,22 @@ const PersonalDataForm = ({
             {
               length: 2,
               regexp: /^[1-2][0-9]$|^3[0-1]$|^0?[1-9]$|^0$/,
-              placeholder: 'DD',
+              placeholder: 'DD'
             },
 
             { fixed: '/' },
             {
               length: 2,
               regexp: /^1[0,1-2]$|^0?[1-9]$|^0$/,
-              placeholder: 'MM',
+              placeholder: 'MM'
             },
             { fixed: '/' },
             {
               length: 4,
               options: Array.from({ length: 100 }, (v, k) => `${2019 - k}`),
               regexp: /^[1-2]$|^19$|^20$|^19[0-9]$|^20[0-9]$|^19[0-9][0-9]$|^20[0-9][0-9]$/,
-              placeholder: 'YYYY',
-            },
+              placeholder: 'YYYY'
+            }
           ]}
           value={values.birthday || ''}
           onChange={event => setFieldValue('birthday', event.target.value)}
@@ -72,21 +80,21 @@ const PersonalDataForm = ({
             {
               length: 2,
               regexp: /^[0-9]{1,2}$/,
-              placeholder: 'XX',
+              placeholder: 'XX'
             },
             { fixed: ')' },
             { fixed: ' ' },
             {
               length: 4,
               regexp: /^[0-9]{1,4}$/,
-              placeholder: 'XXXX',
+              placeholder: 'XXXX'
             },
             { fixed: '-' },
             {
               length: 4,
               regexp: /^[0-9]{1,4}$/,
-              placeholder: 'XXXX',
-            },
+              placeholder: 'XXXX'
+            }
           ]}
           value={values.phone || ''}
           onChange={event => setFieldValue('phone', event.target.value)}
@@ -100,28 +108,33 @@ const PersonalDataForm = ({
             {
               length: 2,
               regexp: /^[0-9]{1,2}$/,
-              placeholder: 'XX',
+              placeholder: 'XX'
             },
             { fixed: ')' },
             { fixed: ' ' },
             {
               length: 4,
               regexp: /^[0-9]{1,4}$/,
-              placeholder: 'XXXX',
+              placeholder: 'XXXX'
             },
             { fixed: '-' },
             {
               length: 4,
               regexp: /^[0-9]{1,4}$/,
-              placeholder: 'XXXX',
-            },
+              placeholder: 'XXXX'
+            }
           ]}
           value={values.cellphone || ''}
           onChange={event => setFieldValue('cellphone', event.target.value)}
         />
       </FormField>
       <FormField label="E-mail" error={errors.email}>
-        <TextInput name="email" type="email" value={values.email || ''} onChange={handleChange} />
+        <TextInput
+          name="email"
+          type="email"
+          value={values.email || ''}
+          onChange={handleChange}
+        />
       </FormField>
     </Grid>
   </Box>

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik } from 'formik';
-import {
-  Box, Button, FormField, Heading, Select, TextInput,
-} from 'grommet';
+import { Box, Button, FormField, Heading, Select, TextInput } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
 import { toast } from 'react-toastify';
@@ -15,13 +13,13 @@ import api from '~/services/api';
 class ActivitiesForm extends Component {
   static propTypes = {
     history: PropTypes.shape({
-      push: PropTypes.func,
+      push: PropTypes.func
     }).isRequired,
     match: PropTypes.shape({
       params: PropTypes.shape({
-        id: PropTypes.string,
-      }),
-    }).isRequired,
+        id: PropTypes.string
+      })
+    }).isRequired
   };
 
   state = {
@@ -30,28 +28,32 @@ class ActivitiesForm extends Component {
     data: {},
     isUpdating: false,
     isLoading: true,
-    isSubmitted: false,
+    isSubmitted: false
   };
 
   async componentDidMount() {
     try {
       const {
         match: {
-          params: { id },
-        },
+          params: { id }
+        }
       } = this.props;
 
       if (id) {
         const [{ data }, { data: dataOptions }] = await Promise.all([
           api.get(`/activities/${id}`),
-          api.get('/instructors', { params: { showAll: true } }),
+          api.get('/instructors', { params: { showAll: true } })
         ]);
 
-        const options = dataOptions.filter(o => o.id !== parseInt(id, 10));
-
-        this.setState({ data, options, defaultOptions: options });
+        this.setState({
+          data,
+          options: dataOptions,
+          defaultOptions: dataOptions
+        });
       } else {
-        const { data: options } = await api.get('/instructors', { params: { showAll: true } });
+        const { data: options } = await api.get('/instructors', {
+          params: { showAll: true }
+        });
 
         this.setState({ options, defaultOptions: options });
       }
@@ -61,14 +63,14 @@ class ActivitiesForm extends Component {
       toast.error('Erro ao buscar dados da atividade. :(');
       console.error(err);
       this.setState({
-        isLoading: false,
+        isLoading: false
       });
     }
   }
 
   static getDerivedStateFromProps(props) {
     return {
-      isUpdating: !!props.match.params.id,
+      isUpdating: !!props.match.params.id
     };
   }
 
@@ -76,9 +78,9 @@ class ActivitiesForm extends Component {
     try {
       const {
         match: {
-          params: { id },
+          params: { id }
         },
-        history,
+        history
       } = this.props;
 
       await api.delete(`/activities/${id}`);
@@ -97,31 +99,29 @@ class ActivitiesForm extends Component {
     this.setState({ options: defaultOptions });
   };
 
-  handleSearch = (text) => {
+  handleSearch = text => {
     const exp = new RegExp(text, 'i');
     const { defaultOptions } = this.state;
 
     this.setState({
-      options: defaultOptions.filter(o => exp.test(o.name)),
+      options: defaultOptions.filter(o => exp.test(o.name))
     });
   };
 
   render() {
-    const {
-      data, isLoading, isUpdating, isSubmitted, options, defaultOptions,
-    } = this.state;
+    const { data, isLoading, isUpdating, isSubmitted, options } = this.state;
     const {
       match: {
-        params: { id },
+        params: { id }
       },
-      history,
+      history
     } = this.props;
 
     return (
       <Box flex pad="small">
         <Box pad="small" direction="row" justify="between">
           <Heading level={2} margin="none" color="brand">
-            {`${isUpdating ? 'Editar' : 'Novo'} atividade`}
+            {`${isUpdating ? 'Editar' : 'Nova'} atividade`}
           </Heading>
           <Button
             icon={<LinkPrevious color="brand" />}
@@ -140,16 +140,16 @@ class ActivitiesForm extends Component {
             validateOnBlur={isSubmitted}
             validateOnChange={isSubmitted}
             validationSchema={Yup.object().shape({
-              description: Yup.string().required('Campo obrigatório'),
+              description: Yup.string().required('Campo obrigatório')
             })}
             onSubmit={async (values, { setSubmitting }) => {
               this.setState({
-                isLoading: true,
+                isLoading: true
               });
 
               try {
                 await api.postOrPut('/activities', id, {
-                  values,
+                  values
                 });
 
                 toast.success('Atividade salva com sucesso!');
@@ -158,7 +158,7 @@ class ActivitiesForm extends Component {
                 toast.error('Erro ao salvar atividade. :(');
                 console.error(err);
                 this.setState({
-                  isLoading: false,
+                  isLoading: false
                 });
               }
 
@@ -166,10 +166,14 @@ class ActivitiesForm extends Component {
             }}
           >
             {({
-              errors, handleChange, handleSubmit, setFieldValue, values,
+              errors,
+              handleChange,
+              handleSubmit,
+              setFieldValue,
+              values
             }) => (
               <form
-                onSubmit={(event) => {
+                onSubmit={event => {
                   event.preventDefault();
                   this.setState({ isSubmitted: true });
                   handleSubmit();
@@ -184,7 +188,11 @@ class ActivitiesForm extends Component {
                     />
                   </FormField>
                   <FormField label="Local" error={errors.site}>
-                    <TextInput name="site" value={values.site || ''} onChange={handleChange} />
+                    <TextInput
+                      name="site"
+                      value={values.site || ''}
+                      onChange={handleChange}
+                    />
                   </FormField>
                   <FormField label="Instrutor" error={errors.instructor}>
                     <Select
@@ -192,8 +200,12 @@ class ActivitiesForm extends Component {
                       labelKey="name"
                       valueKey="id"
                       options={options}
-                      value={(values.instructor && values.instructor.name) || ''}
-                      onChange={event => setFieldValue('instructor', event.value)}
+                      value={
+                        (values.instructor && values.instructor.name) || ''
+                      }
+                      onChange={event =>
+                        setFieldValue('instructor', event.value)
+                      }
                       onClose={this.handleClose}
                       onSearch={this.handleSearch}
                       emptySearchMessage="Não encontrado"
@@ -209,21 +221,21 @@ class ActivitiesForm extends Component {
                 >
                   <Button type="submit" primary label="Salvar" />
                   {isUpdating && (
-                  <Button
-                    type="button"
-                    color="status-critical"
-                    label="Excluir"
-                    onClick={async () => {
-                      const deleteActivity = await swal({
-                        title: 'Excluir atividade?',
-                        text: 'Essa ação não poderá ser revertida!',
-                        icon: 'warning',
-                        buttons: ['Cancelar', 'Excluir'],
-                      });
+                    <Button
+                      type="button"
+                      color="status-critical"
+                      label="Excluir"
+                      onClick={async () => {
+                        const deleteActivity = await swal({
+                          title: 'Excluir atividade?',
+                          text: 'Essa ação não poderá ser revertida!',
+                          icon: 'warning',
+                          buttons: ['Cancelar', 'Excluir']
+                        });
 
-                      if (deleteActivity) this.handleDelete();
-                    }}
-                  />
+                        if (deleteActivity) this.handleDelete();
+                      }}
+                    />
                   )}
                 </Box>
               </form>

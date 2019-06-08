@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box, Button, CheckBox, Heading, Text,
-} from 'grommet';
+import { Box, Button, CheckBox, Heading, Text } from 'grommet';
 import { Edit, UserAdd } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
-import { PagingState, CustomPaging, SearchState } from '@devexpress/dx-react-grid';
+import {
+  PagingState,
+  CustomPaging,
+  SearchState
+} from '@devexpress/dx-react-grid';
 import {
   Grid,
   Table,
   TableHeaderRow,
   PagingPanel,
   Toolbar,
-  SearchPanel,
+  SearchPanel
 } from 'dx-react-grid-grommet';
 import { toast } from 'react-toastify';
 
@@ -23,8 +25,8 @@ import api from '~/services/api';
 class StudentsList extends Component {
   static propTypes = {
     history: PropTypes.shape({
-      push: PropTypes.func,
-    }).isRequired,
+      push: PropTypes.func
+    }).isRequired
   };
 
   state = {
@@ -38,17 +40,17 @@ class StudentsList extends Component {
       {
         name: 'id',
         title: 'ID',
-        getCellValue: datum => <Text>{datum.id}</Text>,
+        getCellValue: datum => <Text>{datum.id}</Text>
       },
       {
         name: 'name',
         title: 'Nome',
-        getCellValue: datum => <Text>{datum.name}</Text>,
+        getCellValue: datum => <Text>{datum.name}</Text>
       },
       {
         name: 'cellphone',
         title: 'Celular',
-        getCellValue: datum => <Text>{datum.cellphone}</Text>,
+        getCellValue: datum => <Text>{datum.cellphone}</Text>
       },
       {
         name: 'active',
@@ -57,12 +59,12 @@ class StudentsList extends Component {
           <Box align="center" justify="center" pad={{ vertical: 'xsmall' }}>
             <CheckBox checked={datum.active} readOnly />
           </Box>
-        ),
+        )
       },
       {
         name: 'edit',
         title: 'Ação',
-        getCellValue: (datum) => {
+        getCellValue: datum => {
           const { history } = this.props;
           return (
             <Button
@@ -71,9 +73,9 @@ class StudentsList extends Component {
               onClick={() => history.push(`/students/edit/${datum.id}`)}
             />
           );
-        },
-      },
-    ],
+        }
+      }
+    ]
   };
 
   async componentDidMount() {
@@ -83,13 +85,13 @@ class StudentsList extends Component {
   loadData = async (currentPage = 0, search = '') => {
     try {
       const {
-        data: { results, total: totalCount },
+        data: { results, total: totalCount }
       } = await api.get('/students', { params: { currentPage, search } });
 
       this.setState({
         results,
         totalCount,
-        loading: false,
+        loading: false
       });
     } catch (err) {
       toast.error('Erro ao buscar alunos da API. :(');
@@ -97,27 +99,27 @@ class StudentsList extends Component {
       this.setState({
         results: [],
         totalCount: 0,
-        loading: false,
+        loading: false
       });
     }
   };
 
-  changeCurrentPage = async (currentPage) => {
+  changeCurrentPage = async currentPage => {
     const { searchValue } = this.state;
 
     this.setState({
       loading: true,
-      currentPage,
+      currentPage
     });
 
     await this.loadData(currentPage, searchValue);
   };
 
-  changeSearchValue = async (searchValue) => {
+  changeSearchValue = async searchValue => {
     this.setState({
       loading: true,
       searchValue,
-      currentPage: 0,
+      currentPage: 0
     });
 
     await this.loadData(0, searchValue);
@@ -125,7 +127,12 @@ class StudentsList extends Component {
 
   render() {
     const {
-      loading, columns, results, pageSize, currentPage, totalCount,
+      loading,
+      columns,
+      results,
+      pageSize,
+      currentPage,
+      totalCount
     } = this.state;
     const { history } = this.props;
 
@@ -153,7 +160,7 @@ class StudentsList extends Component {
             columnExtensions={[
               { columnName: 'id', align: 'left', width: 60 },
               { columnName: 'active', align: 'center', width: 120 },
-              { columnName: 'edit', width: 170 },
+              { columnName: 'edit', width: 170 }
             ]}
             noDataCellComponent={() => (
               <td colSpan="5">
@@ -166,9 +173,17 @@ class StudentsList extends Component {
           />
           <TableHeaderRow />
           <Toolbar />
-          <SearchPanel messages={{ searchPlaceholder: 'Pesquisar alunos...' }} />
-          <PagingPanel messages={{ info: ({ from, to, count }) => `${from}-${to} de ${count}` }} />
-          <Box align="center">{loading && <Spinning color="brand" size="large" />}</Box>
+          <SearchPanel
+            messages={{ searchPlaceholder: 'Pesquisar alunos...' }}
+          />
+          <PagingPanel
+            messages={{
+              info: ({ from, to, count }) => `${from}-${to} de ${count}`
+            }}
+          />
+          <Box align="center">
+            {loading && <Spinning color="brand" size="large" />}
+          </Box>
         </Grid>
       </Box>
     );
