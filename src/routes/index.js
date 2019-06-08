@@ -15,6 +15,9 @@ import InstructorsForm from '~/pages/instructors/form';
 import ActivitiesList from '~/pages/activities/list';
 import ActivitiesForm from '~/pages/activities/form';
 
+import EnrollmentsList from '~/pages/enrollments/list';
+import EnrollmentsForm from '~/pages/enrollments/form';
+
 import Route from './Route';
 
 const Routes = () => (
@@ -36,6 +39,10 @@ const Routes = () => (
     <Route exact path="/activities" component={ActivitiesList} />
     <Route path="/activities/new" component={ActivitiesForm} />
     <Route path="/activities/edit/:id" component={ActivitiesForm} />
+
+    <Route exact path="/enrollments" component={EnrollmentsList} />
+    <Route path="/enrollments/new" component={EnrollmentsForm} />
+    <Route path="/enrollments/edit/:id" component={EnrollmentsForm} />
 
     <Redirect from="*" to="/dashboard" />
   </Switch>
