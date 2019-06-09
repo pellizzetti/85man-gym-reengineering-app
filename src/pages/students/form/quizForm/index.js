@@ -50,7 +50,6 @@ const QuizForm = ({
   handleChange,
   handleSearch,
   options,
-  defaultOptions,
   setFieldValue,
   values
 }) => (
@@ -79,7 +78,12 @@ const QuizForm = ({
                 { label: 'Sim', value: 'true' },
                 { label: 'Não', value: 'false' }
               ]}
-              value={values.quiz.has_health_insurance ? 'true' : 'false'}
+              value={
+                (values.quiz.has_health_insurance || 'false').toString() ===
+                'true'
+                  ? 'true'
+                  : 'false'
+              }
               onChange={event =>
                 setFieldValue('quiz.has_health_insurance', event.target.value)
               }
@@ -96,6 +100,10 @@ const QuizForm = ({
             name="quiz.health_insurance"
             value={values.quiz.health_insurance || ''}
             onChange={handleChange}
+            disabled={
+              (values.quiz.has_health_insurance || 'false').toString() !==
+              'true'
+            }
           />
         </FormField>
       </Box>
@@ -111,7 +119,11 @@ const QuizForm = ({
                 { label: 'Sim', value: 'true' },
                 { label: 'Não', value: 'false' }
               ]}
-              value={values.quiz.play_sport ? 'true' : 'false'}
+              value={
+                (values.quiz.play_sport || 'false').toString() === 'true'
+                  ? 'true'
+                  : 'false'
+              }
               onChange={event =>
                 setFieldValue('quiz.play_sport', event.target.value)
               }
@@ -125,6 +137,7 @@ const QuizForm = ({
             name="quiz.sport"
             value={values.quiz.sport || ''}
             onChange={handleChange}
+            disabled={(values.quiz.play_sport || 'false').toString() !== 'true'}
           />
         </FormField>
       </Box>
@@ -182,6 +195,10 @@ const QuizForm = ({
                   name="quiz.other_reason"
                   value={values.quiz.other_reason || ''}
                   onChange={handleChange}
+                  disabled={
+                    !values.quiz.reason_for_doing ||
+                    values.quiz.reason_for_doing.indexOf('Outros') === -1
+                  }
                 />
               </FormField>
             </>
@@ -250,6 +267,12 @@ const QuizForm = ({
                   onClose={handleClose}
                   onSearch={handleSearch}
                   emptySearchMessage="Não encontrado"
+                  disabled={
+                    !values.quiz.found_out_through ||
+                    values.quiz.found_out_through.indexOf(
+                      'Aluno da academia'
+                    ) === -1
+                  }
                 />
               </FormField>
             </>
