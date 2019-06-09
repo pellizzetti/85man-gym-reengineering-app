@@ -125,19 +125,21 @@ class PagedList extends Component {
       addIcon: AddIcon
     } = this.props;
 
-    columns.push({
-      name: 'edit',
-      title: 'Ação',
-      getCellValue: datum => {
-        return (
-          <Button
-            icon={<Edit color="brand" />}
-            label="Editar"
-            onClick={() => history.push(`/${resource}/edit/${datum.id}`)}
-          />
-        );
-      }
-    });
+    if (!columns.find(e => e.name === 'edit')) {
+      columns.push({
+        name: 'edit',
+        title: 'Ação',
+        getCellValue: datum => {
+          return (
+            <Button
+              icon={<Edit color="brand" />}
+              label="Editar"
+              onClick={() => history.push(`/${resource}/edit/${datum.id}`)}
+            />
+          );
+        }
+      });
+    }
 
     return (
       <Box flex pad="small">
