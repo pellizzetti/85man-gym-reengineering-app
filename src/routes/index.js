@@ -18,6 +18,9 @@ import ActivitiesForm from '~/pages/activities/form';
 import EnrollmentsList from '~/pages/enrollments/list';
 import EnrollmentsForm from '~/pages/enrollments/form';
 
+import OrdersList from '~/pages/orders/list';
+import OrdersForm from '~/pages/orders/form';
+
 import Route from './Route';
 
 const Routes = () => (
@@ -43,6 +46,10 @@ const Routes = () => (
     <Route exact path="/enrollments" component={EnrollmentsList} />
     <Route path="/enrollments/new" component={EnrollmentsForm} />
     <Route path="/enrollments/edit/:id" component={EnrollmentsForm} />
+
+    <Route exact path="/orders" component={OrdersList} />
+    <Route path="/orders/new" component={OrdersForm} />
+    <Route path="/orders/edit/:id" component={OrdersForm} />
 
     <Redirect from="*" to="/dashboard" />
   </Switch>

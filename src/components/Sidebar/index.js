@@ -134,7 +134,9 @@ const renderList = history => (
     </ListItem>
     <ListItem>
       <Anchor
-        onClick={() => {}}
+        onClick={() => {
+          history.push('/orders');
+        }}
         icon={<Transaction />}
         label="Vendas"
         size="medium"

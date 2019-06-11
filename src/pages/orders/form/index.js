@@ -6,11 +6,11 @@ import {
   Button,
   FormField,
   Grid,
+  RadioButtonGroup,
   Heading,
   MaskedInput,
   Select,
-  Text,
-  TextInput
+  Text
 } from 'grommet';
 import { LinkPrevious } from 'grommet-icons';
 import { Spinning } from 'grommet-controls';
@@ -24,12 +24,22 @@ import {
   TableEditRow,
   TableEditColumn
 } from 'dx-react-grid-grommet';
+import styled from 'styled-components';
 
 import StripedTable from '~/components/StripedTable';
 
 import api from '~/services/api';
 
-class EnrollmentsForm extends Component {
+const RowRadioButtonGroup = styled(RadioButtonGroup)`
+  flex-direction: row;
+  padding: 1.5px;
+
+  & > div {
+    margin-left: 10px;
+  }
+`;
+
+class OrdersForm extends Component {
   static propTypes = {
     history: PropTypes.shape({
       push: PropTypes.func
@@ -44,8 +54,8 @@ class EnrollmentsForm extends Component {
   state = {
     defaultOptions: [],
     options: [],
-    defaultOptionsAtv: [],
-    optionsAtv: [],
+    defaultOptionsPrd: [],
+    optionsPrd: [],
     data: {},
     isUpdating: false,
     isLoading: true,
@@ -57,26 +67,22 @@ class EnrollmentsForm extends Component {
         getCellValue: datum => <Text>{datum.description}</Text>
       },
       {
-        name: 'weekdays',
-        title: 'Dias da semana',
-        getCellValue: datum => <Text>{datum.weekdays}</Text>
+        name: 'quantity',
+        title: 'Quantidade',
+        getCellValue: datum => <Text>{datum.quantity}</Text>
       },
       {
-        name: 'starts_at',
-        title: 'Início',
-        getCellValue: datum => <Text>{datum.starts_at}</Text>
-      },
-      {
-        name: 'ends_at',
-        title: 'Fim',
-        getCellValue: datum => <Text>{datum.ends_at}</Text>
+        name: 'amount',
+        title: 'Valor',
+        getCellValue: datum => <Text>{datum.amount}</Text>
       }
     ],
-    activities: [],
+    products: [],
     editingStateColumnExtensions: [
       { columnName: 'id', editingEnabled: false },
       { columnName: 'description', editingEnabled: false }
-    ]
+    ],
+    orderTotal: 0
   };
 
   async componentDidMount() {
@@ -91,41 +97,48 @@ class EnrollmentsForm extends Component {
         const [
           { data },
           { data: dataOptions },
-          { data: dataOptionsAtv }
+          { data: dataOptionsPrd }
         ] = await Promise.all([
-          api.get(`/enrollments/${id}`),
+          api.get(`/orders/${id}`),
           api.get('/students', { params: { showAll: true } }),
-          api.get('/activities', { params: { showAll: true } })
+          api.get('/products', { params: { showAll: true } })
         ]);
+
+        let orderTotal = 0;
+        data.items.forEach(product => {
+          const amount = String(product.amount).replace(/,/g, '.');
+          orderTotal += product.quantity * parseFloat(amount);
+        });
 
         this.setState({
           data,
-          activities: data.activities,
+          products: data.items,
+          orderTotal,
           options: dataOptions,
           defaultOptions: dataOptions,
-          optionsAtv: dataOptionsAtv,
-          defaultOptionsAtv: dataOptionsAtv
+          optionsPrd: dataOptionsPrd,
+          defaultOptionsPrd: dataOptionsPrd
         });
       } else {
         const [
           { data: dataOptions },
-          { data: dataOptionsAtv }
+          { data: dataOptionsPrd }
         ] = await Promise.all([
           api.get('/students', { params: { showAll: true } }),
-          api.get('/activities', { params: { showAll: true } })
+          api.get('/products', { params: { showAll: true } })
         ]);
 
         this.setState({
           options: dataOptions,
           defaultOptions: dataOptions,
-          optionsAtv: dataOptionsAtv,
-          defaultOptionsAtv: dataOptionsAtv
+          optionsPrd: dataOptionsPrd,
+          defaultOptionsPrd: dataOptionsPrd
         });
       }
 
       this.setState({ isLoading: false });
     } catch (err) {
-      toast.error('Erro ao buscar dados da matrícula. :(');
+      toast.error('Erro ao buscar dados da venda. :(');
       console.error(err);
       this.setState({
         isLoading: false
@@ -148,12 +161,12 @@ class EnrollmentsForm extends Component {
         history
       } = this.props;
 
-      await api.delete(`/enrollments/${id}`);
+      await api.delete(`/orders/${id}`);
 
-      toast.success('Matrícula excluída com sucesso!');
-      history.push('/enrollments');
+      toast.success('Venda excluída com sucesso!');
+      history.push('/orders');
     } catch (err) {
-      toast.error('Erro ao excluir matrícula. :(');
+      toast.error('Erro ao excluir venda. :(');
       console.error(err);
     }
   };
@@ -173,50 +186,56 @@ class EnrollmentsForm extends Component {
     });
   };
 
-  handleCloseAtv = () => {
-    const { defaultOptionsAtv } = this.state;
+  handleClosePrd = () => {
+    const { defaultOptionsPrd } = this.state;
 
-    this.setState({ optionsAtv: defaultOptionsAtv });
+    this.setState({ optionsPrd: defaultOptionsPrd });
   };
 
-  handleSearchAtv = text => {
+  handleSearchPrd = text => {
     const exp = new RegExp(text, 'i');
-    const { defaultOptionsAtv } = this.state;
+    const { defaultOptionsPrd } = this.state;
 
     this.setState({
-      optionsAtv: defaultOptionsAtv.filter(o => exp.test(o.name))
+      optionsPrd: defaultOptionsPrd.filter(o => exp.test(o.name))
     });
   };
 
-  addActivity = activity => {
-    const { activities: oldActivities } = this.state;
+  addProduct = product => {
+    const { products: oldProducts } = this.state;
 
-    const activities = [...oldActivities];
+    const products = [...oldProducts];
 
-    activities.push(activity);
+    product.quantity = '0';
+    product.amount = '0';
+
+    products.push(product);
 
     this.setState({
-      activities
+      products
     });
   };
 
   commitChanges = ({ changed, deleted }) => {
-    let { activities } = this.state;
+    let { products, orderTotal } = this.state;
 
     if (changed) {
-      activities = activities.map(activity =>
-        changed[activity.id]
-          ? { ...activity, ...changed[activity.id] }
-          : activity
+      products = products.map(product =>
+        changed[product.id] ? { ...product, ...changed[product.id] } : product
       );
     }
 
     if (deleted) {
       const deletedSet = new Set(deleted);
-      activities = activities.filter(activity => !deletedSet.has(activity.id));
+      products = products.filter(product => !deletedSet.has(product.id));
     }
 
-    this.setState({ activities });
+    products.forEach(product => {
+      const amount = String(product.amount).replace(/,/g, '.');
+      orderTotal += product.quantity * parseFloat(amount);
+    });
+
+    this.setState({ products, orderTotal });
   };
 
   render() {
@@ -226,10 +245,11 @@ class EnrollmentsForm extends Component {
       isUpdating,
       isSubmitted,
       options,
-      optionsAtv,
+      optionsPrd,
       columns,
-      activities,
-      editingStateColumnExtensions
+      products,
+      editingStateColumnExtensions,
+      orderTotal
     } = this.state;
     const {
       match: {
@@ -242,12 +262,12 @@ class EnrollmentsForm extends Component {
       <Box flex pad="small">
         <Box pad="small" direction="row" justify="between">
           <Heading level={2} margin="none" color="brand">
-            {`${isUpdating ? 'Editar' : 'Nova'} matrícula`}
+            {`${isUpdating ? 'Editar' : 'Nova'} venda`}
           </Heading>
           <Button
             icon={<LinkPrevious color="brand" />}
             label="Voltar"
-            onClick={() => history.push('/enrollments')}
+            onClick={() => history.push('/orders')}
           />
         </Box>
 
@@ -265,17 +285,19 @@ class EnrollmentsForm extends Component {
                 isLoading: true
               });
 
-              values.activities = activities;
+              values.items = products;
+              values.type = values.type || 'bar';
+              delete values.order_total;
 
               try {
-                await api.postOrPut('/enrollments', id, {
+                await api.postOrPut('/orders', id, {
                   values
                 });
 
-                toast.success('Matrícula salva com sucesso!');
-                history.push('/enrollments');
+                toast.success('Venda salva com sucesso!');
+                history.push('/orders');
               } catch (err) {
-                toast.error('Erro ao salvar matrícula. :(');
+                toast.error('Erro ao salvar venda. :(');
                 console.error(err);
                 this.setState({
                   isLoading: false
@@ -285,13 +307,7 @@ class EnrollmentsForm extends Component {
               setSubmitting();
             }}
           >
-            {({
-              errors,
-              handleChange,
-              handleSubmit,
-              setFieldValue,
-              values
-            }) => (
+            {({ errors, handleSubmit, setFieldValue, values }) => (
               <form
                 onSubmit={event => {
                   event.preventDefault();
@@ -323,12 +339,9 @@ class EnrollmentsForm extends Component {
                         emptySearchMessage="Não encontrado"
                       />
                     </FormField>
-                    <FormField
-                      label="Data do exame"
-                      error={errors.examination_date}
-                    >
+                    <FormField label="Data da venda" error={errors.order_date}>
                       <MaskedInput
-                        name="examination_date"
+                        name="order_date"
                         mask={[
                           {
                             length: 2,
@@ -353,27 +366,9 @@ class EnrollmentsForm extends Component {
                             placeholder: 'YYYY'
                           }
                         ]}
-                        value={values.examination_date || ''}
+                        value={values.order_date || ''}
                         onChange={event =>
-                          setFieldValue('examination_date', event.target.value)
-                        }
-                      />
-                    </FormField>
-                    <FormField
-                      label="Duração do contrato (meses)"
-                      error={errors.contract_length}
-                    >
-                      <MaskedInput
-                        name="contract_length"
-                        mask={[
-                          {
-                            length: [1, 2],
-                            regexp: /^[0-9]{1,2}$/
-                          }
-                        ]}
-                        value={values.contract_length || ''}
-                        onChange={event =>
-                          setFieldValue('contract_length', event.target.value)
+                          setFieldValue('order_date', event.target.value)
                         }
                       />
                     </FormField>
@@ -395,43 +390,38 @@ class EnrollmentsForm extends Component {
                         }
                       />
                     </FormField>
-                    <FormField
-                      label="Taxa de inscrição"
-                      error={errors.registration_fee}
-                    >
-                      <TextInput
-                        name="registration_fee"
-                        value={values.registration_fee || ''}
-                        onChange={handleChange}
-                      />
-                    </FormField>
-                    <FormField
-                      label="Mensalidade"
-                      error={errors.monthly_payment}
-                    >
-                      <TextInput
-                        name="monthly_payment"
-                        value={values.monthly_payment || ''}
-                        onChange={handleChange}
-                      />
+                    <FormField label="Tipo da venda" error={errors.type}>
+                      <Box pad={{ horizontal: 'small', vertical: 'xsmall' }}>
+                        <RowRadioButtonGroup
+                          name="type"
+                          options={[
+                            { label: 'Bar', value: 'bar' },
+                            { label: 'Loja', value: 'loja' }
+                          ]}
+                          value={values.type || 'bar'}
+                          onChange={event =>
+                            setFieldValue('type', event.target.value)
+                          }
+                        />
+                      </Box>
                     </FormField>
                   </Grid>
-                  <FormField label="Atividade">
+                  <FormField label="Produto">
                     <Select
-                      name="activity"
+                      name="product"
                       labelKey="description"
                       valueKey="id"
-                      options={optionsAtv}
-                      onChange={event => this.addActivity(event.value)}
-                      onClose={this.handleCloseAtv}
-                      onSearch={this.handleSearchAtv}
-                      emptySearchMessage="Não encontrada"
+                      options={optionsPrd}
+                      onChange={event => this.addProduct(event.value)}
+                      onClose={this.handleClosePrd}
+                      onSearch={this.handleSearchPrd}
+                      emptySearchMessage="Não encontrado"
                     />
                   </FormField>
                   <TableGrid
-                    rows={activities}
+                    rows={products}
                     columns={columns}
-                    getRowId={activity => activity.id}
+                    getRowId={product => product.id}
                   >
                     <EditingState
                       onCommitChanges={this.commitChanges}
@@ -461,6 +451,15 @@ class EnrollmentsForm extends Component {
                       }}
                     />
                   </TableGrid>
+                  <Box align="end" pad="medium">
+                    <Text size="medium">
+                      Valor da compra:{' '}
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }).format(orderTotal)}
+                    </Text>
+                  </Box>
                 </Box>
 
                 <Box
@@ -476,14 +475,14 @@ class EnrollmentsForm extends Component {
                       color="status-critical"
                       label="Excluir"
                       onClick={async () => {
-                        const deleteEnrollment = await swal({
-                          title: 'Excluir matrícula?',
+                        const deleteOrder = await swal({
+                          title: 'Excluir venda?',
                           text: 'Essa ação não poderá ser revertida!',
                           icon: 'warning',
                           buttons: ['Cancelar', 'Excluir']
                         });
 
-                        if (deleteEnrollment) this.handleDelete();
+                        if (deleteOrder) this.handleDelete();
                       }}
                     />
                   )}
@@ -497,4 +496,4 @@ class EnrollmentsForm extends Component {
   }
 }
 
-export default EnrollmentsForm;
+export default OrdersForm;
