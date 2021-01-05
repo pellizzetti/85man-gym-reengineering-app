@@ -27,7 +27,7 @@
     "@devexpress/dx-react-grid": "^1.10.5",
     "@material-ui/core": "^3.9.3",
     "@sweetalert/with-react": "^0.1.1",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "customize-cra": "^0.2.12",
     "dx-react-grid-grommet": "^1.0.16",
     "formik": "^1.5.7",
